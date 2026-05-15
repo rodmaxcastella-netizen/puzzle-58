@@ -6,11 +6,28 @@ import { useRealtime } from './hooks/useRealtime';
 import './styles/App.css';
 
 function App() {
-  const { currentImage, status, isProcessing, triggerUpdate } = useRealtime(heroBg);
+  const { currentImage, status, isProcessing, sendSignal, triggerUpdate } = useRealtime(heroBg);
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      sendSignal(file);
+    }
+  };
 
   return (
     <div className="app-container">
+      {/* Hidden input for signal transmission */}
+      <input 
+        type="file" 
+        id="signal-input" 
+        style={{ display: 'none' }} 
+        accept="image/*"
+        onChange={handleFileChange}
+      />
+
       <header className="navbar">
+
         <motion.div 
           className="logo"
           initial={{ opacity: 0, x: -20 }}
@@ -40,8 +57,14 @@ function App() {
               <h1 className="hero-title">NEXT GEN VELOCITY</h1>
               <p className="hero-subtitle">Experience the pinnacle of automotive engineering and real-time performance tracking.</p>
               <div className="hero-actions">
-                <button className="btn btn-primary" onClick={triggerUpdate}>EXPLORE MODELS</button>
-                <button className="btn btn-outline">LEARN MORE</button>
+                <button 
+                  className={`btn btn-primary ${isProcessing ? 'loading' : ''}`} 
+                  onClick={triggerUpdate}
+                  disabled={isProcessing}
+                >
+                  {isProcessing ? 'TRANSMITTING...' : 'TRANSMIT CONCEPT'}
+                </button>
+                <button className="btn btn-outline">VIRTUAL TOUR</button>
               </div>
             </motion.div>
           </div>
